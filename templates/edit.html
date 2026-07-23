@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать коктейль</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0b12;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background-color: #151525;
+            border: 2px solid #ff007f;
+            border-radius: 0;
+            box-shadow: 8px 8px 0px rgba(255, 0, 127, 0.2);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background-color: rgba(255, 0, 127, 0.1) !important;
+            border-bottom: 2px solid #ff007f;
+            padding: 20px;
+        }
+
+        h4 {
+            color: #00ffcc;
+            font-size: 18px;
+            text-transform: uppercase;
+            line-height: 1.5;
+            margin: 0;
+            text-shadow: 3px 3px 0px rgba(0, 255, 204, 0.3);
+        }
+
+        .cyber-label {
+            color: #ffcc00;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .form-control, .form-select {
+            background-color: #0b0b12;
+            border: 2px solid #ff007f;
+            border-radius: 0;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 14px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #1a1a2e;
+            color: #fff;
+            border-color: #00ffcc;
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #4a4a6a;
+            font-size: 10px;
+        }
+
+        .form-check-input {
+            background-color: #0b0b12;
+            border: 2px solid #ffcc00;
+            border-radius: 0;
+            width: 16px;
+            height: 16px;
+            margin-top: 0;
+        }
+        .form-check-input:checked {
+            background-color: #ffcc00;
+            border-color: #ffcc00;
+        }
+
+        .form-check-label {
+            font-size: 12px;
+            margin-left: 8px;
+            line-height: 1.4;
+        }
+
+        .current-pic-box {
+            border: 1px dashed #ff007f;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 10px;
+            color: #8c8cba;
+        }
+
+        .current-img-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border: 1px solid #ff007f;
+        }
+
+        .btn-cyber {
+            background-color: transparent;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            border-radius: 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            text-transform: uppercase;
+            padding: 15px;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 4px 4px 0px rgba(0, 255, 204, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn-cyber:hover {
+            background-color: #00ffcc;
+            color: #0b0b12;
+            box-shadow: 0 0 15px #00ffcc;
+            transform: translate(-2px, -2px);
+        }
+
+        .back-link {
+            color: #4a4a6a;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 10px;
+            padding-bottom: 30px;
+        }
+        .back-link:hover { color: #ff007f; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>[MODIFY EXISTING DATA]</h4>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form action="/edit" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ .ID }}">
+                        <input type="hidden" name="current_image" value="{{ .ImagePath }}">
+
+                        <div class="mb-4">
+                            <label class="cyber-label">> DRINK</label>
+                            <input type="text" class="form-control" name="name" required value="{{ .Name }}">
+                        </div>
+
+                        <div class="mb-4 d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input" id="is_iba" name="is_iba" {{ if .IsIBA }}checked{{ end }}>
+                            <label class="form-check-label text-warning" for="is_iba">🎖 [IBA CERTIFIED STATUS]</label>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="cyber-label">> VISUAL APPEARANCE</label>
+                            {{ if .ImagePath }}
+                            <div class="current-pic-box">
+                                <img src="{{ .ImagePath }}" class="current-img-preview">
+                                <span>FILE_EXISTS.<br>UPLOAD_NEW_TO_OVERWRITE.</span>
+                            </div>
+                            {{ end }}
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="cyber-label">> FLAVOUR</label>
+                            <select class="form-select" name="category">
+                                <option value="{{ .Category }}" selected>Current: {{ .Category }}</option>
+                                <option value="Strong">Strong</option>
+                                <option value="Sour">Sour</option>
+                                <option value="Refreshing">Refreshing</option>
+                                <option value="Sweet">Sweet</option>
+                                <option value="Non-alcoholic">Non-alcoholic</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="cyber-label">> INGREDIENTS</label>
+                            <textarea class="form-control" name="ingredients" rows="4" required>{{ .Ingredients }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="cyber-label">> PREPARATIONS</label>
+                            <textarea class="form-control" name="method" rows="4" required>{{ .Method }}</textarea>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="cyber-label">> GARNISH</label>
+                            <input type="text" class="form-control" name="serving" required value="{{ .Serving }}">
+                        </div>
+
+                        <button type="submit" class="btn-cyber">UPDATE DATA SEQUENCE</button>
+                    </form>
+                </div>
+            </div>
+            <a href="/" class="back-link">> ABORT_MODIFICATION</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
